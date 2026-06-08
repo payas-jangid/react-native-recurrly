@@ -32,8 +32,21 @@ const SubscriptionCard = ({ name, price, currency, icon, billing, color, categor
       </View>
 
       {expanded && (
-        <View className="sub-bdy">
+        <View className="sub-body">
           <View className="sub-details">
+            <View className="sub-row">
+              <View className="sub-row-copy">
+                <Text className="sub-label">Payment:</Text>
+                <Text
+                  className="sub-value"
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {paymentMethod?.trim()
+                    ?? "Not Provided"}
+                </Text>
+              </View>
+            </View>
 
             <View className="sub-row">
               <View className="sub-row-copy">
@@ -43,7 +56,7 @@ const SubscriptionCard = ({ name, price, currency, icon, billing, color, categor
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {category?.trim() || plan?.trim()}
+                  {(category?.trim() || plan?.trim()) ?? 'Not provided'}
                 </Text>
               </View>
             </View>
@@ -56,7 +69,9 @@ const SubscriptionCard = ({ name, price, currency, icon, billing, color, categor
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {startDate ? formatSubscriptionDateTime(startDate) : ''}
+                  {startDate
+                    ? formatSubscriptionDateTime(startDate)
+                    : "Not Provided"}
                 </Text>
               </View>
             </View>
@@ -69,7 +84,7 @@ const SubscriptionCard = ({ name, price, currency, icon, billing, color, categor
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {renewalDate ? formatSubscriptionDateTime(renewalDate) : ''}
+                  {renewalDate ? formatSubscriptionDateTime(renewalDate) : "Not provided"}
                 </Text>
               </View>
             </View>
@@ -82,7 +97,7 @@ const SubscriptionCard = ({ name, price, currency, icon, billing, color, categor
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {status ? formatStatusLabel(status) : ''}
+                  {status ? formatStatusLabel(status) : "Not provided"}
                 </Text>
               </View>
             </View>

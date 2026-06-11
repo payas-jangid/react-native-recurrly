@@ -1,3 +1,4 @@
+import { runClerkAction } from "@/lib/auth";
 import { useAuth, useSignUp } from "@clerk/expo";
 import { Link, useRouter, type Href } from "expo-router";
 import { styled } from "nativewind";
@@ -32,7 +33,7 @@ export default function Page() {
   const passwordIsValid = useMemo(() => password.length >= 8, [password]);
   const canSubmit =
     emailIsValid && passwordIsValid && fetchStatus !== "fetching";
-  const isVerifying =
+  const isVerifying = () =>
     signUp.status === "missing_requirements" &&
     signUp.unverifiedFields.includes("email_address");
 
@@ -68,7 +69,17 @@ export default function Page() {
       return;
     }
 
-    const { error } = await signUp.password({ emailAddress, password });
+    const passwordResult = await runClerkAction(
+      () => signUp.password({ emailAddress, password }),
+      {
+        setFormError,
+        setStatusMessage,
+        defaultErrorMessage: "Unable to create your account. Please try again.",
+      },
+    );
+    if (!passwordResult) return;
+
+    const { error } = passwordResult;
     if (error) {
       setFormError(
         error.longMessage ?? error.message ?? "Unable to create your account.",
@@ -77,13 +88,31 @@ export default function Page() {
     }
 
     if (signUp.status === "complete") {
-      await navigateAfterAuth();
+      await runClerkAction(navigateAfterAuth, {
+        setFormError,
+        setStatusMessage,
+        defaultErrorMessage: "Unable to complete sign up. Please try again.",
+      });
       return;
     }
 
-    if (isVerifying) {
-      await signUp.verifications.sendEmailCode();
-      setStatusMessage("A verification code was sent to your email.");
+    const shouldVerify =
+      signUp.status === "missing_requirements" &&
+      signUp.unverifiedFields.includes("email_address");
+
+    if (shouldVerify) {
+      const sendResult = await runClerkAction(
+        () => signUp.verifications.sendEmailCode(),
+        {
+          setFormError,
+          setStatusMessage,
+          defaultErrorMessage:
+            "Unable to send verification code. Please try again.",
+        },
+      );
+      if (sendResult !== undefined) {
+        setStatusMessage("A verification code was sent to your email.");
+      }
       return;
     }
 
@@ -99,10 +128,22 @@ export default function Page() {
       return;
     }
 
-    await signUp.verifications.verifyEmailCode({ code });
+    const verifyResult = await runClerkAction(
+      () => signUp.verifications.verifyEmailCode({ code }),
+      {
+        setFormError,
+        setStatusMessage,
+        defaultErrorMessage: "Verification failed. Please try again.",
+      },
+    );
+    if (!verifyResult) return;
 
     if (signUp.status === "complete") {
-      await navigateAfterAuth();
+      await runClerkAction(navigateAfterAuth, {
+        setFormError,
+        setStatusMessage,
+        defaultErrorMessage: "Unable to complete sign up. Please try again.",
+      });
       return;
     }
 

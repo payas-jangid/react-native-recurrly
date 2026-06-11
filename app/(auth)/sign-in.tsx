@@ -1,3 +1,4 @@
+import { runClerkAction } from "@/lib/auth";
 import { useAuth, useSignIn } from "@clerk/expo";
 import { Link, useRouter, type Href } from "expo-router";
 import { styled } from "nativewind";
@@ -68,14 +69,28 @@ export default function Page() {
       return;
     }
 
-    const { error } = await signIn.password({ emailAddress, password });
+    const passwordResult = await runClerkAction(
+      () => signIn.password({ emailAddress, password }),
+      {
+        setFormError,
+        setStatusMessage,
+        defaultErrorMessage: "Unable to sign in. Please try again.",
+      },
+    );
+    if (!passwordResult) return;
+
+    const { error } = passwordResult;
     if (error) {
       setFormError(error.longMessage ?? error.message ?? "Unable to sign in.");
       return;
     }
 
     if (signIn.status === "complete") {
-      await navigateAfterAuth();
+      await runClerkAction(navigateAfterAuth, {
+        setFormError,
+        setStatusMessage,
+        defaultErrorMessage: "Unable to complete sign in. Please try again.",
+      });
       return;
     }
 
@@ -87,8 +102,18 @@ export default function Page() {
         (factor) => factor.strategy === "email_code",
       );
       if (emailFactor) {
-        await signIn.mfa.sendEmailCode();
-        setStatusMessage("A verification code was sent to your email.");
+        const sendResult = await runClerkAction(
+          () => signIn.mfa.sendEmailCode(),
+          {
+            setFormError,
+            setStatusMessage,
+            defaultErrorMessage:
+              "Unable to send verification code. Please try again.",
+          },
+        );
+        if (sendResult !== undefined) {
+          setStatusMessage("A verification code was sent to your email.");
+        }
       } else {
         setFormError("A verification step is required to complete sign in.");
       }
@@ -107,10 +132,22 @@ export default function Page() {
       return;
     }
 
-    await signIn.mfa.verifyEmailCode({ code });
+    const verifyResult = await runClerkAction(
+      () => signIn.mfa.verifyEmailCode({ code }),
+      {
+        setFormError,
+        setStatusMessage,
+        defaultErrorMessage: "Verification failed. Please try again.",
+      },
+    );
+    if (!verifyResult) return;
 
     if (signIn.status === "complete") {
-      await navigateAfterAuth();
+      await runClerkAction(navigateAfterAuth, {
+        setFormError,
+        setStatusMessage,
+        defaultErrorMessage: "Unable to complete sign in. Please try again.",
+      });
       return;
     }
 
@@ -118,7 +155,14 @@ export default function Page() {
   };
 
   const handleReset = async () => {
-    await signIn.reset();
+    const resetResult = await runClerkAction(() => signIn.reset(), {
+      setFormError,
+      setStatusMessage,
+      defaultErrorMessage:
+        "Unable to reset the sign-in flow. Please try again.",
+    });
+    if (resetResult === undefined) return;
+
     setEmailAddress("");
     setPassword("");
     setCode("");

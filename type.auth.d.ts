@@ -1,1 +1,81 @@
-/**\n * Authentication Type Definitions\n */\n\nimport type { UserResource } from '@clerk/types';\n\n/**\n * Auth state for the application\n */\nexport type AuthState = {\n  isLoaded: boolean;\n  isSignedIn: boolean;\n  user: UserResource | null | undefined;\n  isAuthenticating: boolean;\n  isAuthenticated: boolean;\n};\n\n/**\n * Sign-up form state\n */\nexport type SignUpFormState = {\n  emailAddress: string;\n  password: string;\n  code: string;\n  isVerifying: boolean;\n  errors: Record<string, string>;\n  statusMessage: string;\n};\n\n/**\n * Sign-in form state\n */\nexport type SignInFormState = {\n  emailAddress: string;\n  password: string;\n  code: string;\n  isVerifying: boolean;\n  errors: Record<string, string>;\n  statusMessage: string;\n};\n\n/**\n * User profile for display\n */\nexport type UserProfile = {\n  id: string;\n  email: string;\n  firstName?: string | null;\n  lastName?: string | null;\n  fullName?: string;\n  imageUrl?: string;\n  createdAt: Date;\n};\n\n/**\n * Auth error response\n */\nexport type AuthError = {\n  code?: string;\n  message: string;\n  longMessage?: string;\n  fieldName?: string;\n};\n\n/**\n * MFA verification status\n */\nexport type MFAStatus =\n  | 'not_required'\n  | 'pending_verification'\n  | 'verified'\n  | 'failed';\n\n/**\n * Session task type from Clerk\n */\nexport type SessionTask =\n  | 'verify_email'\n  | 'verify_phone_number'\n  | 'update_password'\n  | 'update_profile';\n"
+/**
+ * Authentication Type Definitions
+ */
+
+import type { UserResource } from "@clerk/types";
+
+/**
+ * Auth state for the application
+ */
+export type AuthState = {
+  isLoaded: boolean;
+  isSignedIn: boolean;
+  user: UserResource | null | undefined;
+  isAuthenticating: boolean;
+  isAuthenticated: boolean;
+};
+
+/**
+ * Sign-up form state
+ */
+export type SignUpFormState = {
+  emailAddress: string;
+  password: string;
+  code: string;
+  isVerifying: boolean;
+  errors: Record<string, string>;
+  statusMessage: string;
+};
+
+/**
+ * Sign-in form state
+ */
+export type SignInFormState = {
+  emailAddress: string;
+  password: string;
+  code: string;
+  isVerifying: boolean;
+  errors: Record<string, string>;
+  statusMessage: string;
+};
+
+/**
+ * User profile for display
+ */
+export type UserProfile = {
+  id: string;
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  fullName?: string;
+  imageUrl?: string;
+  createdAt: Date;
+};
+
+/**
+ * Auth error response
+ */
+export type AuthError = {
+  code?: string;
+  message: string;
+  longMessage?: string;
+  fieldName?: string;
+};
+
+/**
+ * MFA verification status
+ */
+export type MFAStatus =
+  | "not_required"
+  | "pending_verification"
+  | "verified"
+  | "failed";
+
+/**
+ * Session task type from Clerk
+ */
+export type SessionTask =
+  | "verify_email"
+  | "verify_phone_number"
+  | "update_password"
+  | "update_profile";

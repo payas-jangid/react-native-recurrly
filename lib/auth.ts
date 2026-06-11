@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 /**
  * Email validation regex - allows most valid email formats
  */
-export const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * Validates an email address format
@@ -36,7 +36,7 @@ export const isStrongPassword = (password: string): boolean => {
   if (!/[a-z]/.test(password)) return false;
 
   // Should contain number
-  if (!/\\d/.test(password)) return false;
+  if (!/\d/.test(password)) return false;
 
   return true;
 };

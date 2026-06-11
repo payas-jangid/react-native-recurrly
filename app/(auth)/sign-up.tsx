@@ -210,7 +210,7 @@ export default function Page() {
               <Text className="auth-helper">{statusMessage}</Text>
             ) : null}
 
-            {!isVerifying ? (
+            {!isVerifying() ? (
               <Pressable
                 className={`auth-button ${!canSubmit ? "auth-button-disabled" : ""}`}
                 onPress={handleSubmit}

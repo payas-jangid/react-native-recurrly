@@ -24,7 +24,13 @@ This Recurly app now includes a complete production-grade Clerk authentication s
 
 ### 1. Set Your Clerk Publishable Key
 
-Add your Clerk Publishable Key to `.env`:
+First, copy `.env.example` to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Then add your Clerk Publishable Key to `.env`:
 
 ```env
 EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
@@ -35,6 +41,8 @@ EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
 - Go to [Clerk Dashboard](https://dashboard.clerk.com)
 - Navigate to **API Keys**
 - Copy your **Publishable Key** from the Quick Copy section
+
+> **Note:** Keep your `.env` file local and private. It's already in `.gitignore` to prevent accidental commits.
 
 ### 2. Install Dependencies (Already Done)
 

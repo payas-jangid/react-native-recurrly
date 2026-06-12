@@ -1,5 +1,5 @@
-import { useAuth, useClerk, useUser } from '@clerk/expo';
-import { useCallback, useMemo } from 'react';
+import { useAuth, useClerk, useUser } from "@clerk/expo";
+import { useCallback, useMemo } from "react";
 
 /**
  * Email validation regex - allows most valid email formats
@@ -48,11 +48,11 @@ export const useDisplayEmail = (): string => {
   const { user } = useUser();
 
   return useMemo(() => {
-    if (!user) return '';
+    if (!user) return "";
     return (
       user.primaryEmailAddress?.emailAddress ??
       user.emailAddresses?.[0]?.emailAddress ??
-      ''
+      ""
     );
   }, [user]);
 };
@@ -94,7 +94,7 @@ export const useSignOutHandler = () => {
     try {
       await signOut();
     } catch (error) {
-      console.error('Sign out error:', error);
+      console.error("Sign out error:", error);
     }
   }, [signOut]);
 
@@ -104,8 +104,8 @@ export const useSignOutHandler = () => {
 /**
  * Formats error messages for display
  */
-export const formatAuthError = (error: any): string => {
-  if (!error) return 'An error occurred';
+export const formatAuthError = (error: any): string | undefined => {
+  if (!error) return undefined;
 
   // Clerk error with long message
   if (error.longMessage) return error.longMessage;
@@ -114,9 +114,9 @@ export const formatAuthError = (error: any): string => {
   if (error.message) return error.message;
 
   // String error
-  if (typeof error === 'string') return error;
+  if (typeof error === "string") return error;
 
-  return 'An error occurred. Please try again.';
+  return undefined;
 };
 
 export type RunClerkActionOptions = {
@@ -130,7 +130,7 @@ export async function runClerkAction<T>(
   {
     setFormError,
     setStatusMessage,
-    defaultErrorMessage = 'An error occurred. Please try again.',
+    defaultErrorMessage = "An error occurred. Please try again.",
   }: RunClerkActionOptions,
 ): Promise<T | undefined> {
   try {
@@ -139,11 +139,11 @@ export async function runClerkAction<T>(
     const message = formatAuthError(error) || defaultErrorMessage;
     setFormError(message);
     if (setStatusMessage) {
-      setStatusMessage('');
+      setStatusMessage("");
     }
     return undefined;
   }
-};
+}
 
 /**
  * Check if an error is a specific Clerk error code
@@ -156,13 +156,13 @@ export const isClerkErrorCode = (error: any, code: string): boolean => {
  * Common Clerk error codes
  */
 export const CLERK_ERROR_CODES = {
-  USER_NOT_FOUND: 'form_identifier_not_found',
-  INVALID_PASSWORD: 'form_password_incorrect',
-  PASSWORD_TOO_SHORT: 'password_too_short',
-  EMAIL_EXISTS: 'form_identifier_exists',
-  INVALID_EMAIL: 'form_param_format_invalid',
-  TOO_MANY_ATTEMPTS: 'too_many_attempts',
-  SESSION_EXPIRED: 'session_expired',
+  USER_NOT_FOUND: "form_identifier_not_found",
+  INVALID_PASSWORD: "form_password_incorrect",
+  PASSWORD_TOO_SHORT: "password_too_short",
+  EMAIL_EXISTS: "form_identifier_exists",
+  INVALID_EMAIL: "form_param_format_invalid",
+  TOO_MANY_ATTEMPTS: "too_many_attempts",
+  SESSION_EXPIRED: "session_expired",
 } as const;
 
 /**
@@ -186,9 +186,9 @@ export const debounce = <T extends (...args: any[]) => any>(
  * Get user initials for avatar display
  */
 export const getUserInitials = (email?: string): string => {
-  if (!email) return '?';
+  if (!email) return "?";
 
-  const parts = email.split('@')[0].split('.');
+  const parts = email.split("@")[0].split(".");
   if (parts.length > 1) {
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
@@ -200,11 +200,11 @@ export const getUserInitials = (email?: string): string => {
  * Mask email for privacy (show first char, hide middle)
  */
 export const maskEmail = (email: string): string => {
-  const [localPart, domain] = email.split('@');
+  const [localPart, domain] = email.split("@");
   const visibleLength = Math.max(1, Math.floor(localPart.length / 3));
   const masked =
     localPart.slice(0, visibleLength) +
-    '*'.repeat(Math.max(0, localPart.length - visibleLength * 2)) +
+    "*".repeat(Math.max(0, localPart.length - visibleLength * 2)) +
     localPart.slice(-visibleLength);
   return `${masked}@${domain}`;
 };

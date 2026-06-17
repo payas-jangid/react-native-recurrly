@@ -1,11 +1,8 @@
+import CreateSubscriptionModal from "@/components/CreateSubscriptionModal";
 import ListHeading from "@/components/ListHeading";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import UpcomingSubscriptionCard from "@/components/UpcomingSubscriptionCard";
-import {
-  HOME_BALANCE,
-  HOME_SUBSCRIPTIONS,
-  UPCOMING_SUBSCRIPTIONS,
-} from "@/constants/data";
+import { HOME_BALANCE, UPCOMING_SUBSCRIPTIONS } from "@/constants/data";
 import { icons } from "@/constants/icons";
 import images from "@/constants/images";
 import "@/global.css";
@@ -14,16 +11,19 @@ import { useUser } from "@clerk/expo";
 import dayjs from "dayjs";
 import { styled } from "nativewind";
 import { useState } from "react";
-import { FlatList, Image, Text, View } from "react-native";
+import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+import { useSubscriptions } from "../../lib/subscriptions-store";
 const SafeAreaView = styled(RNSafeAreaView);
 
 export default function App() {
   const { user } = useUser();
+  const { subscriptions, addSubscription } = useSubscriptions();
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<
     string | null
   >(null);
-
+  const [isCreateSubscriptionVisible, setIsCreateSubscriptionVisible] =
+    useState(false);
 
   const displayName =
     user?.firstName ||
@@ -33,23 +33,39 @@ export default function App() {
 
   return (
     <SafeAreaView className="flex-1 bg-background p-5">
+      <CreateSubscriptionModal
+        visible={isCreateSubscriptionVisible}
+        onClose={() => setIsCreateSubscriptionVisible(false)}
+        onCreate={addSubscription}
+      />
       <FlatList
         ListHeaderComponent={() => (
           <>
             <View className="home-header">
-              <View className="home-user">
+              <View className="home-user flex-1 min-w-0">
                 <Image
                   source={
                     user?.imageUrl ? { uri: user.imageUrl } : images.avatar
                   }
                   className="home-avatar"
                 />
-                <View>
-                  <Text className="home-user-name">{displayName}</Text>
+                <View className="min-w-0 flex-1">
+                  <Text className="home-user-name" numberOfLines={1}>
+                    {displayName}
+                  </Text>
                 </View>
               </View>
 
-              <Image source={icons.add} className="home-add-icon" />
+              <Pressable
+                onPress={() => setIsCreateSubscriptionVisible(true)}
+                hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel="Add subscription"
+                className="home-add-button"
+              >
+                <Image source={icons.add} className="home-add-icon" />
+                <Text className="home-add-text">New</Text>
+              </Pressable>
             </View>
 
             <View className="home-balance-card">
@@ -86,7 +102,7 @@ export default function App() {
             <ListHeading title="All Subscriptions" />
           </>
         )}
-        data={HOME_SUBSCRIPTIONS}
+        data={subscriptions}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <SubscriptionCard

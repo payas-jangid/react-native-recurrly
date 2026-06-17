@@ -70,7 +70,7 @@
     }
 
     .home-header {
-        @apply mb-2.5 flex-row items-center justify-between;
+        @apply mb-2.5 flex-row items-center justify-between gap-3;
     }
 
     .home-user {
@@ -82,11 +82,19 @@
     }
 
     .home-user-name {
-        @apply ml-4 text-2xl font-sans-bold text-primary;
+        @apply ml-4 text-lg font-sans-bold text-primary;
     }
 
     .home-add-icon {
-        @apply size-12;
+        @apply size-6;
+    }
+
+    .home-add-button {
+        @apply shrink-0 flex-row items-center gap-2 rounded-full bg-accent px-4 py-3 shadow-sm;
+    }
+
+    .home-add-text {
+        @apply text-sm font-sans-bold text-background;
     }
 
     .home-balance-card {

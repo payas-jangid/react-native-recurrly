@@ -6,6 +6,8 @@ import { SplashScreen, Stack, useNavigationContainerRef } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
 import { useEffect } from "react";
 
+import { SubscriptionsProvider } from "../lib/subscriptions-store";
+
 SplashScreen.preventAutoHideAsync();
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -51,7 +53,9 @@ export default function RootLayout() {
 
   const clerkStack = (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <Stack screenOptions={{ headerShown: false }} />
+      <SubscriptionsProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </SubscriptionsProvider>
     </ClerkProvider>
   );
 
